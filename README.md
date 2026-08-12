@@ -1,4 +1,4 @@
-[![](https://img.shields.io/badge/▶️_Open_in_Browser-4f8cff?style=for-the-badge&logo=googlechrome)](umrechner.html)
+[![](https://img.shields.io/badge/▶️_Open_in_Browser-4f8cff?style=for-the-badge&logo=googlechrome)](https://molex2go.github.io/Umrechner/umrechner.html)
 [![License-MIT](https://img.shields.io/badge/License-MIT-8b90a0?style=for-the-badge)](LICENSE)
 [![Offline](https://img.shields.io/badge/Offline-100%25-36d399?style=for-the-badge)](umrechner.html)
 
@@ -41,8 +41,12 @@ Kein Server, keine Installation – einfach öffnen und loslegen.
 4. Wert eingeben → Ergebnis wird sofort angezeigt
 
 ### Online nutzen
+GitHub Pages live:
+👉 **https://molex2go.github.io/Umrechner/umrechner.html**
+
+Repo Ansicht:
 👉 **https://github.com/molex2go/Umrechner/blob/main/umrechner.html**
-Direkt im Browser öffnen oder lokal speichern.
+*Hinweis: GitHub zeigt HTML-Dateien im Blob-View nur als Code an. Zum Ausführen GitHub Pages aktivieren oder Datei lokal öffnen.*
 
 ## 💻 Kompatibilität
 | Plattform | Status |
