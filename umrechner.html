@@ -2,222 +2,414 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Umrechner & Wissenschaftsrechner</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── Theme ── */
 :root{
-  --bg:#0b1020; --card:#111827; --muted:#9ca3af; --text:#e5e7eb; --accent:#3b82f6; --accent-2:#8b5cf6;
-  --border:#1f2937; --input:#0b1220; --success:#10b981;
+  --bg:#080c14;--bg2:#0f1525;--card:#141c2e;--card2:#1a2438;
+  --border:#253048;--text:#e4e8f0;--text2:#8892a8;
+  --accent:#4f8cff;--accent2:#8b5cf6;--success:#34d399;--danger:#f87171;
+  --input:#0b1019;--radius:14px;
+  --shadow:0 8px 32px rgba(0,0,0,.35);
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
 }
-:root.light{
-  --bg:#f8fafc; --card:#ffffff; --muted:#64748b; --text:#0f172a; --accent:#2563eb; --accent-2:#7c3aed;
-  --border:#e2e8f0; --input:#ffffff; --success:#059669;
+.light{
+  --bg:#f0f4f8;--bg2:#e8ecf2;--card:#ffffff;--card2:#f8faff;
+  --border:#d4dce8;--text:#0f172a;--text2:#64748b;
+  --accent:#2563eb;--accent2:#7c3aed;--success:#059669;--danger:#dc2626;
+  --input:#ffffff;--shadow:0 8px 32px rgba(0,0,0,.08);
 }
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);transition:.3s}
-header{position:sticky;top:0;backdrop-filter:blur(10px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--border);z-index:10}
-.nav{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:14px 20px}
-.brand{font-weight:700;font-size:18px;display:flex;gap:10px;align-items:center}
-.brand span{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.toggle{display:flex;align-items:center;gap:8px}
-.switch{width:44px;height:24px;background:var(--border);border-radius:999px;position:relative;cursor:pointer}
-.switch::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--text);border-radius:50%;transition:.2s}
-:root.light .switch::after{left:23px}
-.container{max-width:1200px;margin:28px auto;padding:0 20px}
-.tabs{display:inline-flex;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:4px;gap:4px;margin-bottom:18px}
-.tab{padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:14px;color:var(--muted);transition:.2s}
-.tab.active{background:var(--accent);color:white}
-.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
-.grid{display:grid;gap:16px}
-@media(min-width:900px){.grid-3{grid-template-columns:repeat(3,1fr)} .grid-2{grid-template-columns:repeat(2,1fr)}}
-label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-select,input{width:100%;padding:12px 14px;background:var(--input);border:1px solid var(--border);color:var(--text);border-radius:12px;font-size:15px}
-.result{font-size:28px;font-weight:700;margin-top:16px}
-.result span{color:var(--accent)}
-footer{color:var(--muted);text-align:center;margin:40px 0;font-size:13px}
-.calc{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.calc-display{background:var(--input);border:1px solid var(--border);border-radius:16px;padding:16px;font-size:32px;text-align:right;min-height:72px;word-break:break-all}
-.calc-btn{padding:16px;font-size:18px;border-radius:14px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-weight:600;transition:.15s}
-.calc-btn:active{transform:scale(.98)}
-.calc-btn.op{background:color-mix(in srgb,var(--accent) 20%,var(--card));border-color:color-mix(in srgb,var(--accent) 40%,var(--border))}
-.calc-btn.eq{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white;border:none}
-.calc-btn.func{font-size:14px}
-.hidden{display:none}
-@media(max-width:640px){.calc{grid-template-columns:repeat(4,1fr)} .calc-display{font-size:24px}}
+
+/* ── Base ── */
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);transition:background .3s,color .3s;min-height:100vh;padding-bottom:60px}
+
+/* ── Header ── */
+.hdr{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--card) 85%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px}
+.logo i{font-size:22px}
+.theme-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:18px;cursor:pointer;display:grid;place-items:center;transition:.2s}
+.theme-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ── Container ── */
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+
+/* ── App Tabs ── */
+.app-tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px;margin-bottom:18px}
+.app-tab{flex:1;padding:10px 14px;border-radius:999px;text-align:center;font-size:14px;font-weight:600;color:var(--text2);cursor:pointer;transition:.2s}
+.app-tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 16px rgba(79,140,255,.3)}
+
+/* ── Card ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:.3s}
+.card h2{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* ── Form ── */
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.fg select,.fg input{width:100%;padding:12px 14px;background:var(--input);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;font-family:var(--font);transition:.2s;appearance:none;-webkit-appearance:none}
+.fg select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238892a8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11l-5-5h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.fg select:focus,.fg input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.fg input::placeholder{color:var(--text2)}
+
+.row{display:grid;gap:12px}
+@media(min-width:600px){.row-2{grid-template-columns:1fr 1fr}.row-3{grid-template-columns:1fr 1fr 1fr}}
+
+/* ── Result ── */
+.res-box{margin-top:18px;padding:18px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);text-align:center}
+.res-box .val{font-size:28px;font-weight:700;word-break:break-all}
+.res-box .val .hl{color:var(--accent)}
+.res-box .sub{font-size:13px;color:var(--text2);margin-top:6px}
+
+/* ── Category Pills ── */
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.pill{padding:7px 14px;border-radius:999px;font-size:13px;font-weight:500;background:var(--bg2);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:.2s;white-space:nowrap}
+.pill.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 10px rgba(79,140,255,.25)}
+.pill:hover:not(.active){border-color:var(--accent);color:var(--text)}
+
+/* ── Scientific Calc ── */
+.calc-display{background:var(--input);border:1px solid var(--border);border-radius:var(--radius);padding:20px 18px;margin-bottom:14px;min-height:100px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;word-break:break-all}
+.calc-expr{font-size:14px;color:var(--text2);min-height:20px;margin-bottom:4px}
+.calc-val{font-size:36px;font-weight:700}
+.calc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media(max-width:500px){.calc-grid{grid-template-columns:repeat(4,1fr)} .calc-val{font-size:28px}}
+.cb{padding:14px 8px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;transition:.15s;font-family:var(--font);user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.cb:active{transform:scale(.94)}
+.cb.fn{font-size:12px;color:var(--accent)}
+.cb.op{font-size:16px;color:var(--accent2)}
+.cb.eq{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;font-size:18px}
+.cb.cl{color:var(--danger)}
+.cb.span2{grid-column:span 2}
+
+/* ── Footer ── */
+.foot{text-align:center;margin-top:30px;font-size:12px;color:var(--text2)}
+.foot a{color:var(--accent);text-decoration:none}
+
+/* ── Hidden ── */
+.hidden{display:none!important}
 </style>
 </head>
 <body>
-<header>
-<div class="nav">
-<div class="brand">🧮 <span>Umrechner Pro</span></div>
-<div class="toggle">
-<span id="modeLabel">Dark</span>
-<div class="switch" id="themeToggle" title="Dark / Light"></div>
-</div>
-</div>
-</header>
 
-<div class="container">
-<div class="tabs">
-<div class="tab active" data-tab="converter">Umrechner</div>
-<div class="tab" data-tab="calc">Wissenschaftsrechner</div>
+<div class="hdr">
+  <div class="logo"><i>🧮</i> Umrechner Pro</div>
+  <button class="theme-btn" id="themeBtn" title="Dark / Light">🌙</button>
 </div>
 
-<section id="converter" class="card">
-<div class="grid grid-3">
-<div>
-<label>Kategorie</label>
-<select id="catSel"></select>
+<div class="wrap">
+
+  <!-- App Tabs -->
+  <div class="app-tabs">
+    <div class="app-tab active" data-app="conv">🔄 Umrechner</div>
+    <div class="app-tab" data-app="calc">🔬 Wissenschaftsrechner</div>
+  </div>
+
+  <!-- ════════ UMRECHNER ════════ -->
+  <div id="convApp" class="card">
+    <h2>🔄 Einheitenumrechner</h2>
+
+    <div class="pills" id="catPills"></div>
+
+    <div class="row row-3">
+      <div class="fg">
+        <label>Von</label>
+        <select id="fromSel"></select>
+      </div>
+      <div class="fg">
+        <label>Nach</label>
+        <select id="toSel"></select>
+      </div>
+      <div class="fg">
+        <label>Wert</label>
+        <input id="valIn" type="number" step="any" inputmode="decimal" placeholder="0">
+      </div>
+    </div>
+
+    <div class="res-box">
+      <div class="val" id="convRes">—</div>
+      <div class="sub" id="convSub">Gib einen Wert ein</div>
+    </div>
+  </div>
+
+  <!-- ════════ WISSENSCHAFTSRECHNER ════════ -->
+  <div id="calcApp" class="card hidden">
+    <h2>🔬 Wissenschaftsrechner</h2>
+
+    <div class="calc-display">
+      <div class="calc-expr" id="calcExpr"></div>
+      <div class="calc-val" id="calcVal">0</div>
+    </div>
+
+    <div class="calc-grid">
+      <button class="cb cl"   data-k="clear">AC</button>
+      <button class="cb fn"   data-k="(">(</button>
+      <button class="cb fn"   data-k=")">)</button>
+      <button class="cb fn"   data-k="back">⌫</button>
+      <button class="cb op"   data-k="/">÷</button>
+
+      <button class="cb fn"   data-k="sin(">sin</button>
+      <button class="cb fn"   data-k="cos(">cos</button>
+      <button class="cb fn"   data-k="tan(">tan</button>
+      <button class="cb fn"   data-k="log(">log</button>
+      <button class="cb op"   data-k="*">×</button>
+
+      <button class="cb fn"   data-k="sqrt(">√</button>
+      <button class="cb fn"   data-k="ln(">ln</button>
+      <button class="cb fn"   data-k="pi">π</button>
+      <button class="cb fn"   data-k="e">e</button>
+      <button class="cb op"   data-k="-">−</button>
+
+      <button class="cb"      data-k="7">7</button>
+      <button class="cb"      data-k="8">8</button>
+      <button class="cb"      data-k="9">9</button>
+      <button class="cb fn"   data-k="^">xʸ</button>
+      <button class="cb op"   data-k="+">+</button>
+
+      <button class="cb"      data-k="4">4</button>
+      <button class="cb"      data-k="5">5</button>
+      <button class="cb"      data-k="6">6</button>
+      <button class="cb fn"   data-k="1/">1/x</button>
+      <button class="cb eq span2" data-k="=">=</button>
+
+      <button class="cb"      data-k="1">1</button>
+      <button class="cb"      data-k="2">2</button>
+      <button class="cb"      data-k="3">3</button>
+      <button class="cb"      data-k=".">.</button>
+      <button class="cb fn"   data-k="!">n!</button>
+
+      <button class="cb span2" data-k="0">0</button>
+      <button class="cb fn"   data-k="deg">deg↔rad</button>
+      <button class="cb fn"   data-k="%">%</button>
+    </div>
+  </div>
+
 </div>
-<div>
-<label>Von</label>
-<select id="fromSel"></select>
-</div>
-<div>
-<label>Nach</label>
-<select id="toSel"></select>
-</div>
-<div style="grid-column:1/-1">
-<label>Wert</label>
-<input id="valueIn" type="number" step="any" placeholder="0">
-</div>
-</div>
-<div class="result" id="convResult">—</div>
-</section>
 
-<section id="calc" class="card hidden">
-<div class="calc-display" id="calcDisplay">0</div>
-<div class="calc">
-<button class="calc-btn func" data-k="C">C</button>
-<button class="calc-btn func" data-k="(">(</button>
-<button class="calc-btn func" data-k=")">)</button>
-<button class="calc-btn func" data-k="⌫">⌫</button>
-<button class="calc-btn op" data-k="%">%</button>
-
-<button class="calc-btn func" data-k="sin(">sin</button>
-<button class="calc-btn func" data-k="cos(">cos</button>
-<button class="calc-btn func" data-k="tan(">tan</button>
-<button class="calc-btn func" data-k="log(">log</button>
-<button class="calc-btn op" data-k="÷">÷</button>
-
-<button class="calc-btn func" data-k="sqrt(">√</button>
-<button class="calc-btn func" data-k="ln(">ln</button>
-<button class="calc-btn func" data-k="π">π</button>
-<button class="calc-btn func" data-k="e">e</button>
-<button class="calc-btn op" data-k="×">×</button>
-
-<button class="calc-btn" data-k="7">7</button>
-<button class="calc-btn" data-k="8">8</button>
-<button class="calc-btn" data-k="9">9</button>
-<button class="calc-btn func" data-k="^">^</button>
-<button class="calc-btn op" data-k="-">−</button>
-
-<button class="calc-btn" data-k="4">4</button>
-<button class="calc-btn" data-k="5">5</button>
-<button class="calc-btn" data-k="6">6</button>
-<button class="calc-btn func" data-k="1/x">1/x</button>
-<button class="calc-btn op" data-k="+">+</button>
-
-<button class="calc-btn" data-k="1">1</button>
-<button class="calc-btn" data-k="2">2</button>
-<button class="calc-btn" data-k="3">3</button>
-<button class="calc-btn func" data-k=".">.</button>
-<button class="calc-btn eq" data-k="=">=</button>
-
-<button class="calc-btn" data-k="0" style="grid-column:span 2">0</button>
-</div>
-</section>
-</div>
-
-<footer>© 2026 molex2go • MIT • Offline nutzbar</footer>
+<div class="foot">© 2026 <a href="https://github.com/molex2go" target="_blank">molex2go</a> · MIT · Offline nutzbar</div>
 
 <script>
-const categories = {
-  "Länge":{base:"m",units:{ "Meter m":1,"Kilometer km":1000,"Zentimeter cm":0.01,"Millimeter mm":0.001,"Meile mi":1609.344,"Yard yd":0.9144,"Fuß ft":0.3048,"Zoll in":0.0254,"Seemeile nmi":1852}},
-  "Masse":{base:"kg",units:{ "Kilogramm kg":1,"Gramm g":0.001,"Tonne t":1000,"Pfund lb":0.45359237,"Unze oz":0.0283495231}},
-  "Fläche":{base:"m²",units:{ "Quadratmeter m²":1,"Hektar ha":10000,"Acre ac":4046.86}},
-  "Volumen":{base:"m³",units:{ "Kubikmeter m³":1,"Liter l":0.001,"Milliliter ml":0.000001,"Gallone US gal":0.00378541}},
-  "Temperatur":{isTemp:true,units:{ "Celsius °C":"C","Fahrenheit °F":"F","Kelvin K":"K"}},
-  "Geschwindigkeit":{base:"m/s",units:{ "m/s":1,"km/h":0.277777778,"mph":0.44704,"Knoten":0.514444}},
-  "Leistung":{base:"W",units:{ "Watt W":1,"Kilowatt kW":1000,"Pferdestärke PS":735.49875,"HP hp":745.7}},
-  "Energie":{base:"J",units:{ "Joule J":1,"Kilojoule kJ":1000,"kWh":3.6e6}},
-  "Druck":{base:"Pa",units:{ "Pascal Pa":1,"Bar bar":1e5,"mbar":100,"PSI psi":6894.76}},
-  "Kraft":{base:"N",units:{ "Newton N":1,"Kilopond kp":9.80665}},
-  "Zeit":{base:"s",units:{ "Sekunde s":1,"Minute min":60,"Stunde h":3600,"Tag d":86400}},
-  "Winkel":{base:"rad",units:{ "Grad °":Math.PI/180,"Radiant rad":1}},
-  "Datenmenge":{base:"B",units:{ "Byte B":1,"KB":1024,"MB":1024**2,"GB":1024**3}}
+/* ═══════════════════════════════════════
+   CATEGORIES & UNITS
+   ═══════════════════════════════════════ */
+const CATS = {
+  "📏 Länge":{
+    units:{ "Meter (m)":1, "Kilometer (km)":1000, "Zentimeter (cm)":0.01, "Millimeter (mm)":0.001, "Mikrometer (µm)":1e-6, "Meile (mi)":1609.344, "Fuß (ft)":0.3048, "Zoll (in)":0.0254, "Seemeile (nmi)":1852, "Yard (yd)":0.9144 }
+  },
+  "⚖️ Masse":{
+    units:{ "Kilogramm (kg)":1, "Gramm (g)":0.001, "Milligramm (mg)":1e-6, "Tonne (t)":1000, "Pfund (lb)":0.45359237, "Unze (oz)":0.0283495231, "Stone (st)":6.35029318 }
+  },
+  "📐 Fläche":{
+    units:{ "Quadratmeter (m²)":1, "Quadratkilometer (km²)":1e6, "Hektar (ha)":10000, "Acre (ac)":4046.86, "Quadratfuß (ft²)":0.092903, "Quadratzoll (in²)":0.00064516 }
+  },
+  "🧊 Volumen":{
+    units:{ "Kubikmeter (m³)":1, "Liter (l)":0.001, "Milliliter (ml)":1e-6, "Gallone US (gal)":0.00378541, "Flüssigunze US (fl oz)":0.0000295735 }
+  },
+  "🌡️ Temperatur":{
+    temp:true,
+    units:{ "Celsius (°C)":"C", "Fahrenheit (°F)":"F", "Kelvin (K)":"K" }
+  },
+  "🚗 Geschwindigkeit":{
+    units:{ "Meter/Sekunde (m/s)":1, "Kilometer/Stunde (km/h)":0.277777778, "Meile/Stunde (mph)":0.44704, "Knoten (kn)":0.514444, "Fuß/Sekunde (ft/s)":0.3048 }
+  },
+  "⚡ Leistung":{
+    units:{ "Watt (W)":1, "Kilowatt (kW)":1000, "Pferdestärke (PS)":735.49875, "HP mechanisch (hp)":745.7, "BTU/h":0.29307107 }
+  },
+  "🔋 Energie":{
+    units:{ "Joule (J)":1, "Kilojoule (kJ)":1000, "Kilowattstunde (kWh)":3.6e6, "Kalorie (cal)":4.184, "Kilokalorie (kcal)":4184, "Elektronenvolt (eV)":1.60218e-19 }
+  },
+  "🎈 Druck":{
+    units:{ "Pascal (Pa)":1, "Bar (bar)":1e5, "Millibar (mbar)":100, "PSI (psi)":6894.76, "Atmosphäre (atm)":101325, "Torr":133.322 }
+  },
+  "💪 Kraft":{
+    units:{ "Newton (N)":1, "Kilopond (kp)":9.80665, "Pfundkraft (lbf)":4.44822 }
+  },
+  "⏱️ Zeit":{
+    units:{ "Sekunde (s)":1, "Minute (min)":60, "Stunde (h)":3600, "Tag (d)":86400, "Woche (wk)":604800, "Jahr (a)":31557600 }
+  },
+  "📐 Winkel":{
+    units:{ "Grad (°)":Math.PI/180, "Radiant (rad)":1, "Gradian (gon)":Math.PI/200 }
+  },
+  "💾 Datenmenge":{
+    units:{ "Byte (B)":1, "Kilobyte (KB)":1024, "Megabyte (MB)":1048576, "Gigabyte (GB)":1073741824, "Terabyte (TB)":1099511627776 }
+  }
 };
 
-const catSel=document.getElementById('catSel');
-const fromSel=document.getElementById('fromSel');
-const toSel=document.getElementById('toSel');
-const valueIn=document.getElementById('valueIn');
-const convResult=document.getElementById('convResult');
+/* ═══════════════════════════════════════
+   UMRECHNER
+   ═══════════════════════════════════════ */
+let curCat = Object.keys(CATS)[0];
+const pillsEl = document.getElementById('catPills');
+const fromSel = document.getElementById('fromSel');
+const toSel   = document.getElementById('toSel');
+const valIn   = document.getElementById('valIn');
+const convRes = document.getElementById('convRes');
+const convSub = document.getElementById('convSub');
 
-Object.keys(categories).forEach((k,i)=>{const o=new Option(k,k); if(i===0)o.selected; catSel.add(o);});
+/* Build pills */
+Object.keys(CATS).forEach((name,i)=>{
+  const p = document.createElement('div');
+  p.className = 'pill' + (i===0?' active':'');
+  p.textContent = name;
+  p.onclick = ()=>{ curCat=name; renderPills(); populateUnits(); doConvert(); };
+  pillsEl.appendChild(p);
+});
+
+function renderPills(){
+  document.querySelectorAll('.pill').forEach((p,i)=>{
+    p.classList.toggle('active', Object.keys(CATS)[i]===curCat);
+  });
+}
+
 function populateUnits(){
-  const cat=categories[catSel.value];
-  const units=cat.isTemp?Object.keys(cat.units):Object.keys(cat.units);
+  const u = Object.keys(CATS[curCat].units);
   fromSel.innerHTML=''; toSel.innerHTML='';
-  units.forEach((u,i)=>{fromSel.add(new Option(u,u)); toSel.add(new Option(u,u));});
-  if(units.length>1) toSel.selectedIndex=1;
+  u.forEach(n=>{ fromSel.add(new Option(n,n)); toSel.add(new Option(n,n)); });
+  if(u.length>1) toSel.selectedIndex=1;
 }
 populateUnits();
-function toC(v,u){if(u.includes('°C'))return v; if(u.includes('°F'))return (v-32)*5/9; if(u.includes('K'))return v-273.15; return v}
-function fromC(c,u){if(u.includes('°C'))return c; if(u.includes('°F'))return c*9/5+32; if(u.includes('K'))return c+273.15; return c}
-function convert(){
-  const v=parseFloat(valueIn.value); if(isNaN(v)){convResult.textContent='—';return}
-  const cat=categories[catSel.value];
-  const f=fromSel.value, t=toSel.value;
-  let out;
-  if(cat.isTemp){out=fromC(toC(v,f),t)} else {out=v*cat.units[f]/cat.units[t]}
-  const s=Math.abs(out)>1e12||(Math.abs(out)<1e-6&&out!==0)?out.toExponential(6):Number.isInteger(out)?out: +out.toFixed(6);
-  convResult.innerHTML=`${v} <span>${f}</span> = <span>${s}</span> ${t}`;
+
+/* Convert helpers */
+function toK(v,u){
+  if(u.includes('°C')) return v;
+  if(u.includes('°F')) return (v-32)*5/9;
+  if(u.includes('K')&&!u.includes('k')) return v-273.15;
+  return v-273.15;
 }
-catSel.onchange=populateUnits; catSel.onchange=convert;
-fromSel.onchange=convert; toSel.onchange=convert; valueIn.oninput=convert;
-convert();
+function fromK(k,u){
+  if(u.includes('°C')) return k;
+  if(u.includes('°F')) return k*9/5+32;
+  return k+273.15;
+}
 
-/* Tabs */
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  document.getElementById('converter').classList.toggle('hidden', t.dataset.tab!=='converter');
-  document.getElementById('calc').classList.toggle('hidden', t.dataset.tab!=='calc');
+function doConvert(){
+  const v = valIn.value;
+  if(v==='' || isNaN(v)){ convRes.textContent='—'; convSub.textContent='Gib einen Wert ein'; return; }
+  const val = parseFloat(v);
+  const cat = CATS[curCat];
+  const f = fromSel.value, t = toSel.value;
+  let out;
+  if(cat.temp){
+    out = fromK(toK(val,f),t);
+  } else {
+    out = val * cat.units[f] / cat.units[t];
+  }
+  const s = fmtNum(out);
+  convRes.innerHTML = `${val} <span class="hl">${f}</span> = <span class="hl">${s}</span> ${t}`;
+  convSub.textContent = `${curCat} · Sofortumrechnung`;
+}
+
+function fmtNum(n){
+  if(n===0) return '0';
+  if(Number.isInteger(n) && Math.abs(n)<1e15) return n.toLocaleString('de-DE');
+  if(Math.abs(n)>1e12 || (Math.abs(n)<1e-6 && n!==0)) return n.toExponential(6);
+  return parseFloat(n.toFixed(8)).toLocaleString('de-DE',{maximumFractionDigits:8});
+}
+
+valIn.oninput = doConvert;
+fromSel.onchange = doConvert;
+toSel.onchange = doConvert;
+
+/* ═══════════════════════════════════════
+   APP TABS
+   ═══════════════════════════════════════ */
+document.querySelectorAll('.app-tab').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('.app-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('convApp').classList.toggle('hidden', t.dataset.app!=='conv');
+    document.getElementById('calcApp').classList.toggle('hidden', t.dataset.app!=='calc');
+  };
 });
 
-/* Theme */
-const root=document.documentElement;
-const toggle=document.getElementById('themeToggle');
-const modeLabel=document.getElementById('modeLabel');
-function setTheme(light){root.classList.toggle('light',light); modeLabel.textContent=light?'Light':'Dark'; localStorage.setItem('theme',light?'light':'dark')}
-setTheme(localStorage.getItem('theme')!=='light');
-toggle.onclick=()=>setTheme(!root.classList.contains('light'));
+/* ═══════════════════════════════════════
+   THEME
+   ═══════════════════════════════════════ */
+const themeBtn = document.getElementById('themeBtn');
+let dark = localStorage.getItem('theme') !== 'light';
+function applyTheme(){
+  document.documentElement.classList.toggle('light', !dark);
+  themeBtn.textContent = dark ? '🌙' : '☀️';
+}
+applyTheme();
+themeBtn.onclick = ()=>{ dark=!dark; localStorage.setItem('theme',dark?'dark':'light'); applyTheme(); };
 
-/* Scientific Calculator */
-const display=document.getElementById('calcDisplay');
-let expr='';
-function updateDisp(){display.textContent=expr||'0'}
-document.querySelectorAll('.calc-btn').forEach(b=>b.onclick=()=>{
-  const k=b.dataset.k;
-  if(k==='='){try{
-    let e=expr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/π/g,'Math.PI').replace(/e(?![a-zA-Z])/g,'Math.E');
-    // degrees for trig
-    e=e.replace(/sin\(/g,'Math.sin(').replace(/cos\(/g,'Math.cos(').replace(/tan\(/g,'Math.tan(');
-    // convert deg to rad
-    e=e.replace(/Math\.(sin|cos|tan)\(([^)]+)\)/g,(m,fn,arg)=>`Math.${fn}(${arg}*Math.PI/180)`);
-    e=e.replace(/log\(/g,'Math.log10(').replace(/ln\(/g,'Math.log(').replace(/sqrt\(/g,'Math.sqrt(').replace(/\^/g,'**');
-    const res=Function('return '+e)();
-    expr=String(+res.toFixed(12));
-  }catch{expr='Error'} updateDisp();
-  }else if(k==='C'){expr=''; updateDisp();}
-  else if(k==='⌫'){expr=expr.slice(0,-1); updateDisp();}
-  else{expr+=k; updateDisp();}
+/* ═══════════════════════════════════════
+   WISSENSCHAFTSRECHNER
+   ═══════════════════════════════════════ */
+const calcVal = document.getElementById('calcVal');
+const calcExpr = document.getElementById('calcExpr');
+let expr = '';
+let useDeg = true;
+
+function factorial(n){
+  if(n<0) return NaN;
+  if(n===0||n===1) return 1;
+  if(n>170) return Infinity;
+  let r=1; for(let i=2;i<=n;i++) r*=i; return r;
+}
+
+function updateCalc(){
+  calcExpr.textContent = expr || '';
+  calcVal.textContent = expr || '0';
+}
+
+function evaluate(){
+  if(!expr) return;
+  try{
+    let e = expr;
+    // Replace symbols
+    e = e.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/\^/g,'**');
+    e = e.replace(/pi/g,'Math.PI').replace(/(?<![a-zA-Z])e(?![a-zA-Z])/g,'Math.E');
+    // Factorial
+    e = e.replace(/(\d+)!/g,(_,n)=>factorial(parseInt(n)));
+    // Trig (convert deg->rad if deg mode)
+    if(useDeg){
+      e = e.replace(/sin\(([^)]+)\)/g,(_,a)=>`Math.sin(${a}*Math.PI/180)`);
+      e = e.replace(/cos\(([^)]+)\)/g,(_,a)=>`Math.cos(${a}*Math.PI/180)`);
+      e = e.replace(/tan\(([^)]+)\)/g,(_,a)=>`Math.tan(${a}*Math.PI/180)`);
+    } else {
+      e = e.replace(/sin\(/g,'Math.sin(');
+      e = e.replace(/cos\(/g,'Math.cos(');
+      e = e.replace(/tan\(/g,'Math.tan(');
+    }
+    e = e.replace(/log\(/g,'Math.log10(');
+    e = e.replace(/ln\(/g,'Math.log(');
+    e = e.replace(/sqrt\(/g,'Math.sqrt(');
+    const res = Function('"use strict"; return ('+e+')')();
+    if(typeof res!=='number'||!isFinite(res)){ calcVal.textContent = isNaN(res)?'Fehler':res>0?'+∞':'-∞'; return; }
+    const rounded = parseFloat(res.toPrecision(12));
+    expr = String(rounded);
+    calcExpr.textContent = expr;
+    calcVal.textContent = fmtNum(rounded);
+  }catch(e){
+    calcVal.textContent = 'Fehler';
+  }
+}
+
+document.querySelectorAll('.calc-grid .cb').forEach(btn=>{
+  btn.onclick = ()=>{
+    const k = btn.dataset.k;
+    if(k==='='){ evaluate(); return; }
+    if(k==='clear'){ expr=''; updateCalc(); return; }
+    if(k==='back'){ expr=expr.slice(0,-1); updateCalc(); return; }
+    if(k==='deg'){ useDeg=!useDeg; btn.textContent=useDeg?'deg↔rad':'rad↔deg'; return; }
+    if(k==='1/'){ expr='1/('+expr+')'; updateCalc(); return; }
+    expr += k;
+    updateCalc();
+  };
 });
-updateDisp();
+
+/* Keyboard support for calc */
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('calcApp').classList.contains('hidden')) return;
+  const map={'0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','.':'.','+':'+','-':'-','*':'*','/':'/','(':'(',')':')','^':'^','Enter':'=','=':'=','Backspace':'back','Escape':'clear'};
+  if(map[e.key]){
+    const btn = document.querySelector(`.calc-grid .cb[data-k="${map[e.key]}"]`);
+    if(btn) btn.click();
+  }
+});
 </script>
 </body>
 </html>
