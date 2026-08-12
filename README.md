@@ -9,14 +9,19 @@ Ein übersichtlicher, kategorisierter Einheitenumrechner für alle gängigen Ma�
 - Open Source
 
 ## Nutzung
-1. `umrechner.html` im Browser öffnen
+1. `umrechner.html` lokal im Browser öffnen
 2. Kategorie wählen
 3. Einheit von / Einheit nach wählen
 4. Wert eingeben → Ergebnis wird sofort berechnet
 
+### Online nutzen
+Direkt im Browser öffnen über GitHub:
+https://github.com/molex2go/Umrechner/blob/main/umrechner.html
+
+Oder die Datei herunterladen und lokal öffnen – 100% offline.
+
 ## Dateien
 - `umrechner.html` – kompletter Umrechner als Single-File, im Browser öffnen
-- `umrechner.py` – ausführbare Python-Version mit tkinter
 - `LICENSE` – MIT Lizenz
 
 ## GitHub
