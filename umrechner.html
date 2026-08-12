@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Umrechner – Einheitenumrechner</title>
+<style>
+:root {
+  --bg:#0f172a;
+  --card:#111827;
+  --accent:#3b82f6;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#1f2937;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+header{padding:24px 20px;text-align:center}
+h1{margin:0;font-size:28px}
+.subtitle{color:var(--muted);margin-top:6px}
+main{max-width:1100px;margin:0 auto;padding:20px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.tab{padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:999px;cursor:pointer;color:var(--text);font-size:14px;transition:.2s}
+.tab.active{background:var(--accent);border-color:var(--accent);color:white}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:16px}
+select,input{width:100%;padding:10px 12px;background:#0b1220;border:1px solid var(--border);color:var(--text);border-radius:10px;font-size:15px}
+label{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
+.result{margin-top:18px;font-size:24px;font-weight:600}
+.result span{color:var(--accent)}
+footer{color:var(--muted);text-align:center;margin:40px 0;font-size:13px}
+@media(max-width:600px){.result{font-size:20px}}
+</style>
+</head>
+<body>
+<header>
+<h1>Einheiten-Umrechner</h1>
+<div class="subtitle">Übersichtlich in Kategorien – offline nutzbar</div>
+</header>
+<main>
+<div class="tabs" id="tabs"></div>
+<div class="card">
+<div class="grid">
+<div>
+<label>Von</label>
+<select id="from"></select>
+</div>
+<div>
+<label>Nach</label>
+<select id="to"></select>
+</div>
+<div style="grid-column:1/-1">
+<label>Wert</label>
+<input id="value" type="number" step="any" placeholder="Zahl eingeben">
+</div>
+</div>
+<div class="result" id="result">—</div>
+</div>
+<footer>© 2026 molex2go – MIT Lizenz – Open Source</footer>
+</main>
+<script>
+const categories = {
+  "Länge": {
+    base:"m",
+    units:{
+      "Meter m":1,
+      "Kilometer km":1000,
+      "Zentimeter cm":0.01,
+      "Millimeter mm":0.001,
+      "Mikrometer µm":0.000001,
+      "Meile mi":1609.344,
+      "Yard yd":0.9144,
+      "Fuß ft":0.3048,
+      "Zoll in":0.0254,
+      "Seemeile nmi":1852,
+      "Nautischer Knoten kn":1.852
+    }
+  },
+  "Masse": {
+    base:"kg",
+    units:{
+      "Kilogramm kg":1,
+      "Gramm g":0.001,
+      "Milligramm mg":0.000001,
+      "Tonne t":1000,
+      "Pfund lb":0.45359237,
+      "Unze oz":0.0283495231,
+      "Stone st":6.35029318
+    }
+  },
+  "Fläche": {
+    base:"m²",
+    units:{
+      "Quadratmeter m²":1,
+      "Quadratkilometer km²":1e6,
+      "Hektar ha":10000,
+      "Acre ac":4046.86,
+      "Quadratfuß ft²":0.092903,
+      "Quadratzoll in²":0.00064516
+    }
+  },
+  "Volumen": {
+    base:"m³",
+    units:{
+      "Kubikmeter m³":1,
+      "Liter l":0.001,
+      "Milliliter ml":0.000001,
+      "Gallone US gal":0.00378541,
+      "Gallone UK gal":0.00454609,
+      "Flüssigunze US fl oz":0.0000295735
+    }
+  },
+  "Temperatur": {
+    base:"K",
+    units:{
+      "Celsius °C":"C",
+      "Fahrenheit °F":"F",
+      "Kelvin K":"K"
+    },
+    isTemp:true
+  },
+  "Geschwindigkeit": {
+    base:"m/s",
+    units:{
+      "Meter pro Sekunde m/s":1,
+      "Kilometer pro Stunde km/h":0.277777778,
+      "Meile pro Stunde mph":0.44704,
+      "Knoten kn":0.514444,
+      "Fuß pro Sekunde ft/s":0.3048
+    }
+  },
+  "Leistung": {
+    base:"W",
+    units:{
+      "Watt W":1,
+      "Kilowatt kW":1000,
+      "Pferdestärke PS":735.49875,
+      "Pferdestärke metrische PS":735.49875,
+      "HP mechanisch hp":745.7,
+      "BTU/h":0.29307107
+    }
+  },
+  "Energie": {
+    base:"J",
+    units:{
+      "Joule J":1,
+      "Kilojoule kJ":1000,
+      "Kilowattstunde kWh":3.6e6,
+      "Kalorie cal":4.184,
+      "Kilokalorie kcal":4184,
+      "Elektronenvolt eV":1.60218e-19
+    }
+  },
+  "Druck": {
+    base:"Pa",
+    units:{
+      "Pascal Pa":1,
+      "Bar bar":1e5,
+      "mbar":100,
+      "PSI psi":6894.76,
+      "Atmosphäre atm":101325,
+      "Torr Torr":133.322
+    }
+  },
+  "Kraft": {
+    base:"N",
+    units:{
+      "Newton N":1,
+      "Kilopond kp":9.80665,
+      "Pfundkraft lbf":4.44822
+    }
+  },
+  "Zeit": {
+    base:"s",
+    units:{
+      "Sekunde s":1,
+      "Minute min":60,
+      "Stunde h":3600,
+      "Tag d":86400,
+      "Jahr a":31557600
+    }
+  },
+  "Winkel": {
+    base:"rad",
+    units:{
+      "Grad °":Math.PI/180,
+      "Radiant rad":1,
+      "Gradian gon":Math.PI/200
+    }
+  },
+  "Datenmenge": {
+    base:"B",
+    units:{
+      "Byte B":1,
+      "Kilobyte KB":1024,
+      "Megabyte MB":1024**2,
+      "Gigabyte GB":1024**3,
+      "Terabyte TB":1024**4,
+      "Kibibyte KiB":1024,
+      "Mebibyte MiB":1024**2
+    }
+  }
+};
+
+const tabsEl = document.getElementById('tabs');
+const fromSel = document.getElementById('from');
+const toSel = document.getElementById('to');
+const valueInput = document.getElementById('value');
+const resultEl = document.getElementById('result');
+
+let currentCat = Object.keys(categories)[0];
+
+function renderTabs(){
+  tabsEl.innerHTML='';
+  Object.keys(categories).forEach(name=>{
+    const btn=document.createElement('button');
+    btn.className='tab'+(name===currentCat?' active':'');
+    btn.textContent=name;
+    btn.onclick=()=>{currentCat=name;renderTabs();populateUnits();updateResult();};
+    tabsEl.appendChild(btn);
+  });
+}
+function populateUnits(){
+  const cat=categories[currentCat];
+  fromSel.innerHTML='';
+  toSel.innerHTML='';
+  Object.keys(cat.units).forEach(u=>{
+    const o1=new Option(u,u);
+    const o2=new Option(u,u);
+    fromSel.add(o1);
+    toSel.add(o2);
+  });
+  if(Object.keys(cat.units).length>1) toSel.selectedIndex=1;
+}
+function convert(val,from,to,cat){
+  if(cat.isTemp){
+    const c = toCelsius(val,from);
+    return fromCelsius(c,to);
+  }
+  const fFrom = cat.units[from];
+  const fTo = cat.units[to];
+  const base = val * fFrom;
+  return base / fTo;
+}
+function toCelsius(v,unit){
+  if(unit.includes('°C')) return v;
+  if(unit.includes('°F')) return (v-32)*5/9;
+  if(unit.includes('K')) return v-273.15;
+  return v;
+}
+function fromCelsius(c,unit){
+  if(unit.includes('°C')) return c;
+  if(unit.includes('°F')) return c*9/5+32;
+  if(unit.includes('K')) return c+273.15;
+  return c;
+}
+function updateResult(){
+  const v=parseFloat(valueInput.value);
+  if(isNaN(v)){resultEl.textContent='—';return;}
+  const cat=categories[currentCat];
+  const from=fromSel.value;
+  const to=toSel.value;
+  const out=convert(v,from,to,cat);
+  const outStr = Math.abs(out) > 1e12 || (Math.abs(out) < 1e-6 && out !== 0) ? out.toExponential(6) : Number.isInteger(out) ? out.toString() : out.toFixed(6);
+  resultEl.innerHTML=`${v} <span>${from}</span> = <span>${outStr}</span> ${to}`;
+}
+renderTabs();
+populateUnits();
+valueInput.addEventListener('input',updateResult);
+fromSel.addEventListener('change',updateResult);
+toSel.addEventListener('change',updateResult);
+updateResult();
+</script>
+</body>
+</html>
